@@ -2,6 +2,14 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Run Database Migration scripts:
+
+```
+pnpm prisma generate
+pnpm prisma migrate deploy
+pnpm prisma seed
+```
+
 First, run the development server:
 
 ```bash
