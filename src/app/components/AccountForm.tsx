@@ -1,61 +1,74 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Account = {
   id?: number;
-  name: string;
+  parent_id?: number | null;
   is_group: boolean;
-  parent_id: number | null;
+  name: string;
 };
 
 interface AccountFormProps {
-  onSubmit: (account: Omit<Account, "id" | "children">) => Promise<void>;
+  onSubmit: (account: Omit<Account, "id">) => Promise<void>;
+  existingAccount?: Account | null;
   parentAccounts: Account[];
-  selectedAccount?: Account | null;
 }
 
-const AccountForm: React.FC<AccountFormProps> = ({
-  onSubmit,
-  parentAccounts,
-}) => {
-  const [name, setName] = useState("");
-  const [parentId, setParentId] = useState<number | null>(null);
+const AccountForm: React.FC<AccountFormProps> = ({ onSubmit, existingAccount, parentAccounts }) => {
+  const [name, setName] = useState(existingAccount?.name || "");
+  const [parentId, setParentId] = useState(existingAccount?.parent_id || null);
+  const [isGroup, setIsGroup] = useState(existingAccount?.is_group || false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const isGroup = parentId !== null;
-    onSubmit({ name, is_group: isGroup, parent_id: parentId });
+    onSubmit({ name, parent_id: parentId, is_group: isGroup });
     setName("");
     setParentId(null);
+    setIsGroup(false);
   };
 
+  useEffect(() => {
+    if (existingAccount) {
+      setName(existingAccount.name);
+      setParentId(existingAccount.parent_id ?? null);
+      setIsGroup(existingAccount.is_group);
+    }
+  }, [existingAccount]);
+
   return (
-    <form onSubmit={handleSubmit} className="mt-4">
+    <form onSubmit={handleSubmit} className="p-4 border rounded shadow bg-white">
+      <h2 className="text-xl mb-4">{existingAccount ? "Edit Account" : "Add Account"}</h2>
       <input
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Account Name"
         required
-        className="border p-2 rounded mr-2"
+        className="w-full p-2 mb-2 border rounded"
       />
       <select
-        value={parentId ?? ""} // empty string for individual ac
-        onChange={(e) =>
-          setParentId(e.target.value ? Number(e.target.value) : null)
-        }
-        className="border p-2 rounded mr-2"
+        value={parentId ?? ""}
+        onChange={(e) => setParentId(Number(e.target.value) || null)}
+        className="w-full p-2 mb-2 border rounded"
       >
-        <option value="">Individual</option>
-        {parentAccounts.map((account, i) => (
-          <option key={i} value={account.id}>
+        <option value="">Select Parent Account (optional)</option>
+        {parentAccounts.map((account) => (
+          <option key={account.id} value={account.id}>
             {account.name}
           </option>
         ))}
       </select>
-
-      <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-        Add
+      <label className="flex items-center mb-2">
+        <input
+          type="checkbox"
+          checked={isGroup}
+          onChange={() => setIsGroup(!isGroup)}
+          className="mr-2"
+        />
+        Is Group?
+      </label>
+      <button type="submit" className="w-full p-2 bg-green-500 text-white rounded">
+        {existingAccount ? "Update" : "Create"}
       </button>
     </form>
   );

@@ -50,7 +50,6 @@ const AccountTree = () => {
     setSelectedAccount(account);
   };
 
-  // Build a tree from the flat list of accounts
   const buildTree = (data: Account[]): Account[] => {
     const map = new Map<number, Account>();
     const roots: Account[] = [];
@@ -72,7 +71,6 @@ const AccountTree = () => {
 
   const tree = buildTree(accounts);
 
-  // Generate account codes
   const generateAccountCode = (account: Account): string => {
     let code = account.id.toString().padStart(5, "0");
     let parentId = account.parent_id;
@@ -86,7 +84,6 @@ const AccountTree = () => {
     return code;
   };
 
-  // Accordion View Component
   const AccountAccordion: React.FC<{ account: Account; level: number }> = ({
     account,
     level,
@@ -125,7 +122,6 @@ const AccountTree = () => {
     );
   };
 
-  // Visual Hierarchy Component
   const VisualHierarchy: React.FC<{ tree: Account[] }> = ({ tree }) => {
     const renderHierarchy = (account: Account) => (
       <div key={account.id}>
@@ -151,7 +147,6 @@ const AccountTree = () => {
     return <div>{tree.map(renderHierarchy)}</div>;
   };
 
-  // Hierarchy with Details Table Component
   const HierarchyDetailsTable: React.FC<{ accounts: Account[] }> = ({
     accounts,
   }) => {
@@ -177,12 +172,6 @@ const AccountTree = () => {
 
   return (
     <div className="p-8 max-w-4xl mx-auto  mt-10 space-y-8">
-      {/* form */}
-      <AccountForm
-        onSubmit={handleAddAccount}
-        parentAccounts={accounts}
-        selectedAccount={selectedAccount}
-      />
 
 {/* views */}
       <div className="mb-8">

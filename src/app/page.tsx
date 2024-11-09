@@ -1,10 +1,9 @@
-import AccountTree from './components/AccountTree';
+import React from 'react'
 
-export default function Home() {
+const Home = () => {
   return (
-    <main>
-      <h1 className="text-2xl text-center font-bold mb-4">Accounts Mgmt</h1>
-      <AccountTree />
-    </main>
-  );
+    <div>Home</div>
+  )
 }
+
+export default Home

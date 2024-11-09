@@ -9,16 +9,18 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
     "@prisma/client": "^5.21.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.7",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
     "next": "15.0.2",
     "prisma": "^5.21.1",
     "react": "19.0.0-rc-02c0e824-20241028",
-    "react-dom": "19.0.0-rc-02c0e824-20241028"
+    "react-dom": "19.0.0-rc-02c0e824-20241028",
+    "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
     "@types/node": "^20.17.3",
