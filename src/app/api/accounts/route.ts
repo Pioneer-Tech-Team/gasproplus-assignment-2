@@ -22,10 +22,10 @@ export async function GET(req: NextRequest) {
 // post req
 export async function POST(req: NextRequest) {
   try {
-    const { name, is_group, parent_id } = await req.json();
+    const { name, is_group, parent_id, companyId } = await req.json();
 
     const newAccount = await prisma.account.create({
-      data: { name, is_group, parent_id },
+      data: { name, is_group, parent_id, company: { connect: { id: companyId } } },
     });
 
     return new Response(JSON.stringify(newAccount), {

@@ -14,68 +14,73 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  username String  @unique @db.VarChar(50)
-  password String  @db.VarChar(255) //hashed
-  createdAt DateTime @default(now())
+  id        Int       @id @default(autoincrement())
+  username  String    @unique @db.VarChar(50)
+  password  String    @db.VarChar(255) // hashed
+  createdAt DateTime  @default(now())
+  companies Company[]
 }
 
+model Company {
+  id       Int       @id @default(autoincrement())
+  name     String    @db.VarChar(60)
+  ownerId  Int
+  owner    User      @relation(fields: [ownerId], references: [id])
+  accounts Account[]
+  vouchers Voucher[]
+}
 
 model Account {
-  id        Int      @id @default(autoincrement())
-  parent_id Int?     @default(0) // null if no parent
+  id        Int     @id @default(autoincrement())
+  parent_id Int?    @default(0) // null if no parent
   is_group  Boolean
-  name      String   @db.VarChar(60)
+  name      String  @db.VarChar(60)
+  companyId Int
+  company   Company @relation(fields: [companyId], references: [id])
 
   parent   Account?  @relation("Parent", fields: [parent_id], references: [id])
   children Account[] @relation("Parent")
 }
-model Company {
-  id   Int     @id @default(autoincrement())
-  name String  @db.VarChar(60)
-
-  vouchers Voucher[]
-}
-
-model VoucherType {
-  id          Int        @id @default(autoincrement())
-  shortForm   String     @unique @db.VarChar(4)
-  name        String     @db.VarChar(32)
-  drFilter    String?    @db.VarChar(1024)
-  crFilter    String?    @db.VarChar(1024)
-  relationship RelationshipEnum
-  manyDr      Boolean
-  manyCr      Boolean
-
-  vouchers Voucher[]
-}
 
 model Voucher {
-  id            Int          @id @default(autoincrement())
-  voucherNo     Int          @unique
+  id            Int             @id @default(autoincrement())
+  voucherNo     Int             @unique
   voucherDate   DateTime
-  amount        Decimal      @db.Decimal(15, 2)
-  narration     String?      @db.VarChar(255)
+  amount        Decimal         @db.Decimal(15, 2)
+  narration     String?         @db.VarChar(255)
   voucherTypeId Int
-  companyId     Int?
-  voucherType VoucherType @relation(fields: [voucherTypeId], references: [id])
-  company     Company?    @relation(fields: [companyId], references: [id])
-  details     VoucherDetail[]
+  companyId     Int
+  voucherType   VoucherType     @relation(fields: [voucherTypeId], references: [id])
+  company       Company         @relation(fields: [companyId], references: [id])
+  details       VoucherDetail[]
 }
 
 model VoucherDetail {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   voucherId Int
-  amount    Decimal  @db.Decimal(15, 2)
-  drcr      Int      // 1 for Dr, -1 for Cr
-  remark    String?  @db.VarChar(30)
+  amount    Decimal @db.Decimal(15, 2)
+  drcr      Int // 1 for Dr, -1 for Cr
+  remark    String? @db.VarChar(30)
 
   voucher Voucher @relation(fields: [voucherId], references: [id])
 }
 
+model VoucherType {
+  id           Int              @id @default(autoincrement())
+  shortForm    String           @unique @db.VarChar(4)
+  name         String           @db.VarChar(32)
+  drFilter     String?          @db.VarChar(1024)
+  crFilter     String?          @db.VarChar(1024)
+  relationship RelationshipEnum
+  manyDr       Boolean
+  manyCr       Boolean
+
+  vouchers Voucher[]
+}
+
 model VoucherNos {
-  series  String  @id @db.VarChar(12)
-  lastNo  Int
+  series String @id @db.VarChar(12)
+  lastNo Int
 }
 
 // Enum type for relationship

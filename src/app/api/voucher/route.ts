@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,9 @@ export async function GET() {
     });
     return NextResponse.json(vouchers);
   } catch (error) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), { status: 500 });
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
+      status: 500,
+    });
   }
 }
 
@@ -27,19 +29,27 @@ export async function POST(req: NextRequest) {
       narration,
       voucherTypeId,
       companyId,
-      details, //voucher detail objects
+      details, // Array of voucher detail objects
     } = await req.json();
 
-    //checkif voucherTypeId exist
+    // Validate voucherTypeId
     const voucherType = await prisma.voucherType.findUnique({
       where: { id: voucherTypeId },
     });
-
     if (!voucherType) {
-      return new Response(
-        JSON.stringify({ error: "Invalid voucherTypeId" }),
-        { status: 400 }
-      );
+      return new Response(JSON.stringify({ error: "Invalid voucherTypeId" }), {
+        status: 400,
+      });
+    }
+
+    // Validate companyId
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
+    });
+    if (!company) {
+      return new Response(JSON.stringify({ error: "Invalid companyId" }), {
+        status: 400,
+      });
     }
 
     const newVoucher = await prisma.voucher.create({
@@ -61,10 +71,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(newVoucher, { status: 201 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), { status: 500 });
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
+      status: 500,
+    });
   }
 }
-
 
 export async function PUT(req: NextRequest) {
   try {
@@ -76,8 +87,28 @@ export async function PUT(req: NextRequest) {
       narration,
       voucherTypeId,
       companyId,
-      details,
+      details, // Array of voucher detail objects
     } = await req.json();
+
+    // Validate voucherTypeId
+    const voucherType = await prisma.voucherType.findUnique({
+      where: { id: voucherTypeId },
+    });
+    if (!voucherType) {
+      return new Response(JSON.stringify({ error: "Invalid voucherTypeId" }), {
+        status: 400,
+      });
+    }
+
+    // Validate companyId
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
+    });
+    if (!company) {
+      return new Response(JSON.stringify({ error: "Invalid companyId" }), {
+        status: 400,
+      });
+    }
 
     const updatedVoucher = await prisma.voucher.update({
       where: { id },
@@ -89,7 +120,7 @@ export async function PUT(req: NextRequest) {
         voucherTypeId,
         companyId,
         details: {
-          deleteMany: {}, // existing details delete
+          deleteMany: {},
           create: details,
         },
       },
@@ -100,19 +131,30 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json(updatedVoucher);
   } catch (error) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), { status: 500 });
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
+      status: 500,
+    });
   }
 }
 
 export async function DELETE(req: NextRequest) {
   try {
     const { id } = await req.json();
+
+    // Delete related VoucherDetail entries
+    await prisma.voucherDetail.deleteMany({
+      where: { voucherId: id },
+    });
+
+    // Delete Voucher
     await prisma.voucher.delete({
       where: { id },
     });
 
-    return new Response(null, { status: 204 }); 
+    return new Response(null, { status: 204 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), { status: 500 });
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
+      status: 500,
+    });
   }
 }
