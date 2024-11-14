@@ -9,7 +9,7 @@ type Voucher = {
   amount: number;
   narration?: string;
   voucherTypeId: number;
-  companyId?: number | undefined | null;
+  companyId: number | null;
 };
 
 const VoucherList = () => {
@@ -50,38 +50,26 @@ const VoucherList = () => {
         Add Voucher
       </button>
       {vouchers.map((voucher) => (
-        <div key={voucher.id} className="p-2 border rounded mb-2 flex justify-between">
-          <div>
-            <span className="font-bold">No: {voucher.voucherNo}</span> | 
-            <span> Date: {new Date(voucher.voucherDate).toLocaleDateString()}</span> | 
-            <span> Amount: ${voucher.amount.toFixed(2)}</span>
-          </div>
-          <div>
-            <button
-              onClick={() => {
-                setSelectedVoucher(voucher);
-                setShowModal(true);
-              }}
-              className="mr-2 p-1 bg-yellow-400 rounded"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => handleDeleteVoucher(voucher.id)}
-              className="p-1 bg-red-500 text-white rounded"
-            >
-              Delete
-            </button>
-          </div>
+        <div key={voucher.id} className="p-4 border rounded shadow-lg mb-4 bg-white hover:bg-gray-100 hover:border-gray-300">
+            <a href={`/voucher/${voucher.id}`} >
+            <div className="flex flex-col">
+              <span className="font-bold">No: {voucher.voucherNo}</span>
+              <span>Date: {new Date(voucher.voucherDate).toLocaleDateString()}</span>
+              <span>Amount: ₹{voucher.amount}</span>
+              <span>Narration: {voucher.narration}</span>
+              <span>Type ID: {voucher.voucherTypeId}</span>
+            </div>
+            </a>
         </div>
       ))}
+
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-4 rounded shadow-lg">
             <VoucherForm
               onSubmit={handleAddVoucher}
-              existingVoucher={selectedVoucher}
+              existingVoucher={selectedVoucher || undefined}
             />
             <button onClick={() => setShowModal(false)} className="mt-2 p-1 bg-gray-400 rounded">
               Close

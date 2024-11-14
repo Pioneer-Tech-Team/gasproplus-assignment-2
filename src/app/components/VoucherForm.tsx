@@ -24,8 +24,14 @@ type Company = {
   name: string;
 };
 
+type VoucherType = {
+  id: number;
+  name: string;
+};
+
 const VoucherForm: React.FC<VoucherFormProps> = ({ onSubmit, existingVoucher }) => {
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [voucherTypes, setVoucherTypes] = useState<VoucherType[]>([]);
   const [voucherNo, setVoucherNo] = useState(existingVoucher?.voucherNo || 0);
   const [voucherDate, setVoucherDate] = useState(existingVoucher?.voucherDate || "");
   const [amount, setAmount] = useState(existingVoucher?.amount || 0);
@@ -41,6 +47,15 @@ const VoucherForm: React.FC<VoucherFormProps> = ({ onSubmit, existingVoucher }) 
       })
       .catch(error => {
         console.error("Error fetching companies:", error);
+      });
+
+    fetch("/api/voucher-type")
+      .then(response => response.json())
+      .then(data => {
+        setVoucherTypes(data);
+      })
+      .catch(error => {
+        console.error("Error fetching voucher types:", error);
       });
   }, []);
 
@@ -105,7 +120,11 @@ const VoucherForm: React.FC<VoucherFormProps> = ({ onSubmit, existingVoucher }) 
         className="w-full p-2 mb-2 border rounded"
       >
         <option value="">Select Voucher Type</option>
-        {/* TODO: populate &add options for voucher type  */}
+        {voucherTypes.map(voucherType => (
+          <option key={voucherType.id} value={voucherType.id}>
+            {voucherType.name}
+          </option>
+        ))}
       </select>
       <select
         value={companyId ?? ""}

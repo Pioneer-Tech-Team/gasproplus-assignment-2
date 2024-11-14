@@ -13,13 +13,13 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  try {
-    const { name, owner } = await req.json();
-    const company = await prisma.company.create({ data: { name, owner } });
+  // try {
+    const { name } = await req.json();
+    const company = await prisma.company.create({ data: { name } });
     return NextResponse.json(company, { status: 201 });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), { status: 500 });
-  }
+  // } catch (error) {
+  //   return new Response(JSON.stringify({ error: (error as Error).message }), { status: 500 });
+  // }
 }
 
 export async function PUT(req: NextRequest) {

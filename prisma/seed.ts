@@ -6,8 +6,8 @@ async function main() {
   // Seed VoucherType data
   await prisma.voucherType.createMany({
     data: [
-      { id: 1, shortForm: "JV", name: "Journal Voucher", relationship: "one_to_one", manyDr: true, manyCr: true },
-      { id: 2, shortForm: "PV", name: "Payment Voucher", relationship: "one_to_many", manyDr: false, manyCr: true },
+      { shortForm: "JV", name: "Journal Voucher", relationship: "one_to_one", manyDr: true, manyCr: true },
+      { shortForm: "PV", name: "Payment Voucher", relationship: "one_to_many", manyDr: false, manyCr: true },
     ],
     skipDuplicates: true, // Skip if the entry already exists
   });
@@ -15,14 +15,14 @@ async function main() {
   // Seed Company data
   await prisma.company.createMany({
     data: [
-      { id: 1, name: "Tech Corp", ownerId: 1 },
-      { id: 2, name: "Business Solutions", ownerId: 2 },
+      { name: "Tech Corp" },
+      { name: "Business Solutions" },
     ],
     skipDuplicates: true,
   });
 
   // Seed Account data (commented by default; uncomment if needed)
-  /*
+  
   await prisma.account.createMany({
     data: [
       { parent_id: null, is_group: true, name: "Assets", companyId: 1 },
@@ -51,7 +51,7 @@ async function main() {
     ],
     skipDuplicates: true,
   });
-  */
+  
 }
 
 main()

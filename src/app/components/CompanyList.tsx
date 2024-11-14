@@ -22,6 +22,7 @@ const CompanyList = () => {
   }, []);
 
   const handleAddCompany = async (company: Omit<Company, "id">) => {
+    console.log(company);
     const response = await fetch("/api/company", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -44,27 +45,18 @@ const CompanyList = () => {
       <button onClick={() => setShowModal(true)} className="mb-4 p-2 bg-blue-500 text-white rounded">
         Add Company
       </button>
-      {companies.map((company) => (
-        <div key={company.id} className="p-2 border rounded mb-2 flex justify-between">
+      {companies.length >0  && companies.map((company) => (
+        <div key={company.id} className="p-2 border rounded mb-2 flex justify-between hover:bg-gray-100 hover:border-blue-400">
+        <a href={`/company/${company.id}`} className="flex-grow">
           <span>{company.name}</span>
-          <div>
-            {/* <button
-              onClick={() => {
-                setSelectedCompany(company);
-                setShowModal(true);
-              }}
-              className="mr-2 p-1 bg-yellow-400 rounded"
-            >
-              Edit
-            </button> */}
-            <button
-              onClick={() => handleDeleteCompany(company.id)}
-              className="p-1 bg-red-500 text-white rounded"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
+        </a>
+        <button
+          onClick={() => handleDeleteCompany(company.id)}
+          className="p-1 bg-red-500 text-white rounded"
+        >
+          Delete
+        </button>
+      </div>  
       ))}
 
       {showModal && (

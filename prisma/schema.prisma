@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,26 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int       @id @default(autoincrement())
-  username  String    @unique @db.VarChar(50)
-  password  String    @db.VarChar(255) // hashed
-  createdAt DateTime  @default(now())
-  companies Company[]
-}
-
 model Company {
   id       Int       @id @default(autoincrement())
   name     String    @db.VarChar(60)
-  ownerId  Int
-  owner    User      @relation(fields: [ownerId], references: [id])
   accounts Account[]
   vouchers Voucher[]
 }
 
 model Account {
   id        Int     @id @default(autoincrement())
-  parent_id Int?    @default(0) // null if no parent
+  parent_id Int?    // null if no parent
   is_group  Boolean
   name      String  @db.VarChar(60)
   companyId Int
@@ -40,6 +24,8 @@ model Account {
 
   parent   Account?  @relation("Parent", fields: [parent_id], references: [id])
   children Account[] @relation("Parent")
+
+  voucherDetails VoucherDetail[] //for voucher details
 }
 
 model Voucher {
@@ -50,7 +36,7 @@ model Voucher {
   narration     String?         @db.VarChar(255)
   voucherTypeId Int
   companyId     Int
-  voucherType   VoucherType     @relation(fields: [voucherTypeId], references: [id])
+  voucherType   VoucherType     @relation(fields: [voucherTypeId], references: [id], onDelete: Cascade) //Cascade on del
   company       Company         @relation(fields: [companyId], references: [id])
   details       VoucherDetail[]
 }
@@ -59,10 +45,12 @@ model VoucherDetail {
   id        Int     @id @default(autoincrement())
   voucherId Int
   amount    Decimal @db.Decimal(15, 2)
-  drcr      Int // 1 for Dr, -1 for Cr
+  drcr      Int     // 1 for Dr, -1 for Cr
   remark    String? @db.VarChar(30)
+  accountId Int?    // for referencing affected accountid
 
   voucher Voucher @relation(fields: [voucherId], references: [id])
+  account Account? @relation(fields: [accountId], references: [id]) 
 }
 
 model VoucherType {
