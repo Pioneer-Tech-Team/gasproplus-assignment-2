@@ -68,7 +68,7 @@ model VoucherType {
 
 model VoucherNos {
   series String @id @db.VarChar(12)
-  lastNo Int
+  lastNo Int? @default(autoincrement())
 }
 
 // Enum type for relationship

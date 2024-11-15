@@ -74,6 +74,13 @@ export async function POST(req: NextRequest) {
 
     console.log("Voucher created without details", newVoucher);
 
+    const newVoucherNo = await prisma.voucherNos.create({
+      data: {
+        series: voucherType.shortForm, 
+      }
+    });
+    console.log("VoucherNo created", newVoucherNo);
+
     // Return the created voucher (without details)
     return NextResponse.json(newVoucher, { status: 201 });
 
